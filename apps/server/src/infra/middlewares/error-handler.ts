@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { ZodError, z } from "zod";
 import { InvalidCredentialsError } from "../../application/errors/invalid-credentials-error";
+import { EmailAlreadyTakenError } from "../../application/errors/email-already-taken-error";
 
 export function errorHandler(
   err: unknown,
@@ -13,8 +14,12 @@ export function errorHandler(
   }
 
   if (err instanceof InvalidCredentialsError) {
+    return reply.status(401).json({ message: err.message });
+  }
+
+  if (err instanceof EmailAlreadyTakenError) {
     return reply.status(409).json({ message: err.message });
   }
 
-  return reply.status(500).json({ message: err });
+  console.log(err);
 }

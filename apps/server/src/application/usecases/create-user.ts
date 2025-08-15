@@ -1,6 +1,6 @@
 import { hash } from "bcryptjs";
 import { prisma } from "../../infra/prisma";
-import { InvalidCredentialsError } from "../errors/invalid-credentials-error";
+import { EmailAlreadyTakenError } from "../errors/email-already-taken-error";
 
 interface CreateUserRequest {
   name: string;
@@ -17,7 +17,7 @@ export class CreateUser {
     });
 
     if (userAlreadyExists) {
-      throw new InvalidCredentialsError("Email already taken");
+      throw new EmailAlreadyTakenError();
     }
 
     const user = await prisma.user.create({
