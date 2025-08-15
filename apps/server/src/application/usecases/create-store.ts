@@ -1,4 +1,5 @@
 import { prisma } from "../../infra/prisma";
+import { StoreLimitExceededError } from "../errors/store-limit-exceeded";
 
 interface CreateStoreRequest {
   userId: string;
@@ -14,7 +15,7 @@ export class CreateStore {
     });
 
     if (stores.length === 2) {
-      throw new Error(); // error
+      throw new StoreLimitExceededError();
     }
 
     const store = await prisma.store.create({

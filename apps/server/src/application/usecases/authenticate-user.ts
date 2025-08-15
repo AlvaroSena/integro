@@ -17,13 +17,13 @@ export class AuthenticateUser {
     });
 
     if (!user) {
-      throw new InvalidCredentialsError("Email ou senha inválido");
+      throw new InvalidCredentialsError("Email or password invalid");
     }
 
     const passwordMatch = await compare(password, user.passwordHash);
 
     if (!passwordMatch) {
-      throw new InvalidCredentialsError("Email ou senha inválido");
+      throw new InvalidCredentialsError("Email or password invalid");
     }
 
     const token = sign(

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import { ZodError, z } from "zod";
 import { InvalidCredentialsError } from "../../application/errors/invalid-credentials-error";
 import { EmailAlreadyTakenError } from "../../application/errors/email-already-taken-error";
+import { StoreLimitExceededError } from "../../application/errors/store-limit-exceeded";
 
 export function errorHandler(
   err: unknown,
@@ -18,6 +19,10 @@ export function errorHandler(
   }
 
   if (err instanceof EmailAlreadyTakenError) {
+    return reply.status(409).json({ message: err.message });
+  }
+
+  if (err instanceof StoreLimitExceededError) {
     return reply.status(409).json({ message: err.message });
   }
 
