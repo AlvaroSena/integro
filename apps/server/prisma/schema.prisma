@@ -1,0 +1,86 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  createdAt    DateTime @default(now())
+  stores       Store[]
+
+  @@map("users")
+}
+
+model Store {
+  id        String   @id @default(uuid())
+  name      String
+  ownerId   String   @map("owner_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  owner User @relation(fields: [ownerId], references: [id])
+
+  product        Product[]
+  salesChannels  SaleChannel[]
+  storeMovements StoreMovement[]
+
+  @@map("stores")
+}
+
+model Product {
+  id                String   @id @default(uuid())
+  imageUrl          String   @map("image_url")
+  title             String
+  description       String?
+  coastPriceInCents Int      @map("coast_price_in_cents")
+  salePriceInCents  Int      @map("sale_price_in_cents")
+  quantity          Int
+  barcode           String
+  storeId           String   @map("store_id")
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  store         Store           @relation(fields: [storeId], references: [id])
+  storeMovement StoreMovement[]
+
+  @@map("products")
+}
+
+model SaleChannel {
+  id        String   @id @default(uuid())
+  name      String
+  storeId   String   @map("store_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  Store          Store           @relation(fields: [storeId], references: [id])
+  storeMovements StoreMovement[]
+
+  @@map("sales_channels")
+}
+
+model StoreMovement {
+  id            String            @id @default(uuid())
+  storeId       String            @map("store_id")
+  saleChannelId String            @map("sale_channel_id")
+  productId     String            @map("product_id")
+  type          StockMovementType @default(INBOUND)
+  quantity      Int
+  notes         String?
+  createdAt     DateTime          @default(now()) @map("created_at")
+
+  store       Store       @relation(fields: [storeId], references: [id])
+  saleChannel SaleChannel @relation(fields: [saleChannelId], references: [id])
+  product     Product     @relation(fields: [productId], references: [id])
+
+  @@map("store_movements")
+}
+
+enum StockMovementType {
+  INBOUND
+  OUTBOUND
+}
