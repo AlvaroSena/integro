@@ -28,6 +28,8 @@ export class CreateUser {
       },
     });
 
+    // to do: send an email confirmation
+
     return {
       userId: user.id,
     };
