@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
+import { env } from "../../utils/env";
 
 interface Payload {
   sub: string;
@@ -25,7 +26,7 @@ export function verifyToken(
   }
 
   try {
-    const payload = verify(token, process.env.AUTH_SECRET!) as Payload;
+    const payload = verify(token, env.AUTH_SECRET) as Payload;
 
     request.user = payload;
     next();

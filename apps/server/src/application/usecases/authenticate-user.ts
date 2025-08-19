@@ -2,6 +2,7 @@ import { InvalidCredentialsError } from "../errors/invalid-credentials-error";
 import { prisma } from "../../infra/prisma";
 import { sign } from "jsonwebtoken";
 import { compare } from "bcryptjs";
+import { env } from "../../utils/env";
 
 interface AuthenticateUserRequest {
   email: string;
@@ -30,7 +31,7 @@ export class AuthenticateUser {
       {
         sub: user.id,
       },
-      process.env.AUTH_SECRET!,
+      env.AUTH_SECRET,
       {
         expiresIn: "1d",
       }

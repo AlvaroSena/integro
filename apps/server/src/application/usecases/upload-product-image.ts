@@ -3,6 +3,7 @@ import { ResourceNotFoundError } from "../errors/resource-not-found-error";
 import { sanitizeFileName } from "../../utils/sanitize-fileName";
 import { prisma } from "../../infra/prisma";
 import { s3 } from "../../utils/s3";
+import { env } from "../../utils/env";
 
 interface UploadProductImageRequest {
   ownerId: string;
@@ -35,7 +36,7 @@ export class UploadProductImage {
       throw new ResourceNotFoundError("Product not found");
     }
 
-    const bucket = process.env.AWS_BUCKET!;
+    const bucket = env.AWS_BUCKET;
     const sanitizedName = sanitizeFileName(originalname);
 
     const key = `products/${Date.now()}-${sanitizedName}`;
@@ -49,7 +50,7 @@ export class UploadProductImage {
 
     await s3.send(command);
 
-    const imageUrl = `https://${bucket}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
+    const imageUrl = `https://${bucket}.s3.${env.AWS_REGION}.amazonaws.com/${key}`;
 
     await prisma.product.update({
       where: {
