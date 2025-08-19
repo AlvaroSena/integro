@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { ZodError, z } from "zod";
 import { InvalidCredentialsError } from "../../application/errors/invalid-credentials-error";
 import { EmailAlreadyTakenError } from "../../application/errors/email-already-taken-error";
 import { StoreLimitExceededError } from "../../application/errors/store-limit-exceeded";
 import { ResourceNotFoundError } from "../../application/errors/resource-not-found-error";
+import { ZodError, z } from "zod";
+import { MulterError } from "multer";
 
 export function errorHandler(
   err: unknown,
@@ -29,6 +30,12 @@ export function errorHandler(
 
   if (err instanceof ResourceNotFoundError) {
     return reply.status(404).json({ message: err.message });
+  }
+
+  if (err instanceof MulterError) {
+    return reply
+      .status(400)
+      .json({ message: "File too large. Max 4BM allowed" });
   }
 
   console.log(err);

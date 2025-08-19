@@ -6,10 +6,6 @@ const app = express();
 app.use(express.json());
 app.use("/v1", routes);
 
-app.get("/", (request, reply) => {
-  return reply.json({ message: "hello, world" });
-});
-
 app.use(errorHandler);
 
 export { app };
