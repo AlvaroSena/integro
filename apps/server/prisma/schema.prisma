@@ -30,6 +30,7 @@ model Store {
   product        Product[]
   salesChannels  SaleChannel[]
   storeMovements StoreMovement[]
+  stockBalances  StockBalance[]
 
   @@map("stores")
 }
@@ -48,6 +49,7 @@ model Product {
 
   store         Store           @relation(fields: [storeId], references: [id])
   storeMovement StoreMovement[]
+  stockBalances StockBalance[]
 
   @@map("products")
 }
@@ -84,4 +86,18 @@ model StoreMovement {
 enum StockMovementType {
   INBOUND
   OUTBOUND
+}
+
+model StockBalance {
+  id        String   @id @default(uuid())
+  storeId   String
+  productId String
+  quantity  Int
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  store   Store   @relation(fields: [storeId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([storeId, productId])
+  @@map("stock_balances")
 }

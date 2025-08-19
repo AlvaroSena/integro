@@ -64,6 +64,39 @@ export class CreateStoreMovement {
       },
     });
 
+    const balance = await prisma.stockBalance.findUnique({
+      where: {
+        storeId_productId: {
+          storeId,
+          productId,
+        },
+      },
+    });
+
+    const newQuantity =
+      type === "INBOUND"
+        ? (balance?.quantity ?? 0) + quantity
+        : (balance?.quantity ?? 0) - quantity;
+
+    if (balance) {
+      await prisma.stockBalance.update({
+        where: {
+          id: balance.id,
+        },
+        data: {
+          quantity: newQuantity,
+        },
+      });
+    } else {
+      await prisma.stockBalance.create({
+        data: {
+          storeId,
+          productId,
+          quantity: newQuantity,
+        },
+      });
+    }
+
     return {
       storeMovementId: storeMovement.id,
     };
