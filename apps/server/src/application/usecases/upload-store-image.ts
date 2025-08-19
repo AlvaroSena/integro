@@ -1,6 +1,6 @@
 import { PutObjectCommand } from "@aws-sdk/client-s3";
 import { ResourceNotFoundError } from "../errors/resource-not-found-error";
-import { sanitizeFileName } from "../../utils/sanitize-fileName";
+import { sanitizeFileName } from "../../utils/sanitize-filename";
 import { prisma } from "../../infra/prisma";
 import { s3 } from "../../utils/s3";
 import { env } from "../../utils/env";
